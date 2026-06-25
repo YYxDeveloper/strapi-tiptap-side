@@ -27,7 +27,7 @@ export default function ArticleCard({ article }: ArticleCardProps) {
             width={article.cover?.width}
             height={article.cover?.height}
             loading="lazy"
-            className="w-full h-auto group-hover:scale-105 transition-transform duration-300"
+            className="w-full h-auto img-hover-zoom"
           />
         ) : (
           <div className="aspect-[16/9] w-full flex items-center justify-center text-gray-400 text-sm">

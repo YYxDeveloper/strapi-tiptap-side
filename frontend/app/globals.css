@@ -21,3 +21,34 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans);
 }
+
+/*
+ * img-hover-zoom: 圖片 hover 放大效果
+ *
+ * 預設參數（可由呼叫端透過 inline style 或父層覆寫）：
+ *   --hover-zoom-scale:     1.1       (放大倍率)
+ *   --hover-zoom-duration:  0.5s      (動畫時長)
+ *   --hover-zoom-ease:      ease      (緩動函數)
+ *
+ * 觸發條件（任一即生效）：
+ *   1. 直接 hover 該 <img>
+ *   2. 父層有 .group class 且被 hover（搭配 Tailwind group pattern）
+ *
+ * 使用範例：
+ *   <img class="img-hover-zoom" />
+ *   <img class="img-hover-zoom" style="--hover-zoom-scale: 1.2; --hover-zoom-duration: 0.3s" />
+ *   <a class="group"><img class="img-hover-zoom" /></a>
+ */
+@utility img-hover-zoom {
+  --hover-zoom-scale: 1.1;
+  --hover-zoom-duration: 0.5s;
+  --hover-zoom-ease: ease;
+
+  transition: scale var(--hover-zoom-duration) var(--hover-zoom-ease) 0s;
+  scale: 1;
+
+  &:hover,
+  &:is(:where(.group):hover *) {
+    scale: var(--hover-zoom-scale);
+  }
+}
