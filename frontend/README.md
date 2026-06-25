@@ -57,6 +57,39 @@ frontend/
 | `/login` | 登入 | 公開 |
 | `/admin/new` | 撰寫文章 | **需登入**（proxy.ts 保護） |
 
+## 🌐 完整 Demo URLs（啟動後可直接瀏覽）
+
+**本機服務**：
+- Frontend：http://localhost:3000
+- Backend (Strapi)：http://localhost:1337
+
+**公開頁面**：
+
+| URL | 頁面 |
+|---|---|
+| http://localhost:3000/ | 🏠 首頁（英雄區 + 文章 grid） |
+| http://localhost:3000/blog/why-apple-silicon-changed-everything | 📖 文章詳情（科技：Apple Silicon） |
+| http://localhost:3000/blog/less-is-more-apple-design-philosophy | 📖 文章詳情（設計：少即是多） |
+| http://localhost:3000/blog/my-mac-productivity-toolkit | 📖 文章詳情（生活：Mac 工具） |
+| http://localhost:3000/category/tech | 🏷 分類頁（科技） |
+| http://localhost:3000/category/design | 🏷 分類頁（設計） |
+| http://localhost:3000/category/life | 🏷 分類頁（生活） |
+| http://localhost:3000/login | 🔑 登入頁 |
+
+**受保護頁面**（需登入後才能進）：
+
+| URL | 頁面 |
+|---|---|
+| http://localhost:3000/admin/new | ✍️ 撰寫新文章（TipTap + 封面圖上傳） |
+
+**後端 Strapi**：
+
+| URL | 用途 |
+|---|---|
+| http://localhost:1337/admin | 🛠 Strapi 管理後台 |
+| http://localhost:1337/api/articles?populate[0]=cover&populate[1]=category | 📚 文章列表 JSON |
+| http://localhost:1337/api/categories | 🏷 分類列表 JSON |
+
 ## 🔑 Demo 帳號（在 `/login` 頁面輸入）
 
 ```
