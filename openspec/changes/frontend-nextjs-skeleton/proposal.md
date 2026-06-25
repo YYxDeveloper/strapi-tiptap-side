@@ -37,4 +37,4 @@
 
 - 父 change：`openspec/changes/strapi-tiptap-blog-demo/`（specs/auth.md, design.md）
 - 後端 API：http://localhost:1337
-- 對應 Issue：即將建立
+- 對應 Issue：#2（Sub-issue 2: frontend skeleton）
