@@ -1,61 +1,97 @@
-# 🚀 Getting started with Strapi
+# Strapi Backend
 
-Strapi comes with a full featured [Command Line Interface](https://docs.strapi.io/dev-docs/cli) (CLI) which lets you scaffold and manage your project in seconds.
+Strapi 5 Headless CMS，提供 Article / Category content types 與 REST API。
 
-### `develop`
+> 屬於 [strapi-tiptap-side](../) demo 專案的一部分。
 
-Start your Strapi application with autoReload enabled. [Learn more](https://docs.strapi.io/dev-docs/cli#strapi-develop)
+## 快速啟動
 
-```
-npm run develop
-# or
-yarn develop
-```
-
-### `start`
-
-Start your Strapi application with autoReload disabled. [Learn more](https://docs.strapi.io/dev-docs/cli#strapi-start)
-
-```
-npm run start
-# or
-yarn start
+```bash
+./start.sh develop
+# → http://localhost:1337/admin
 ```
 
-### `build`
+`start.sh` 會自動：
+1. 從 `.env.example` 複製產生 `.env`（若不存在）
+2. 安裝依賴（若 `node_modules` 缺失）
+3. 確保 SQLite 資料庫目錄存在
+4. 啟動 Strapi
 
-Build your admin panel. [Learn more](https://docs.strapi.io/dev-docs/cli#strapi-build)
-
-```
-npm run build
-# or
-yarn build
-```
-
-## ⚙️ Deployment
-
-Strapi gives you many possible deployment options for your project including [Strapi Cloud](https://cloud.strapi.io). Browse the [deployment section of the documentation](https://docs.strapi.io/dev-docs/deployment) to find the best solution for your use case.
+## 🔑 Demo 帳號（首次啟動時自動 seed）
 
 ```
-yarn strapi deploy
+Email    : demo@strapi.local
+Password : Demo1234!
 ```
 
-## 📚 Learn more
+> 此帳號同步用於前端 `/login` 頁面。帳號由 `src/index.ts` 的 `seedDemoUser()` 在首次啟動時建立。
 
-- [Resource center](https://strapi.io/resource-center) - Strapi resource center.
-- [Strapi documentation](https://docs.strapi.io) - Official Strapi documentation.
-- [Strapi tutorials](https://strapi.io/tutorials) - List of tutorials made by the core team and the community.
-- [Strapi blog](https://strapi.io/blog) - Official Strapi blog containing articles made by the Strapi team and the community.
-- [Changelog](https://strapi.io/changelog) - Find out about the Strapi product updates, new features and general improvements.
+## Strapi 指令
 
-Feel free to check out the [Strapi GitHub repository](https://github.com/strapi/strapi). Your feedback and contributions are welcome!
+```bash
+npm run develop    # 開發模式（watch + auto-reload）
+npm run start      # 正式模式
+npm run build      # 構建 admin panel
+npm run console    # 開 Strapi REPL
+```
 
-## ✨ Community
+## Content Types
 
-- [Discord](https://discord.strapi.io) - Come chat with the Strapi community including the core team.
-- [Forum](https://forum.strapi.io/) - Place to discuss, ask questions and find answers, show your Strapi project and get feedback or just talk with other Community members.
-- [Awesome Strapi](https://github.com/strapi/awesome-strapi) - A curated list of awesome things related to Strapi.
+| Type | 用途 |
+|------|------|
+| **Article** | 部落格文章（title / slug / content / excerpt / cover / category） |
+| **Category** | 文章分類（name / slug / color） |
 
----
+詳細 schema 見 `src/api/article/content-types/article/schema.json` 與 `src/api/category/content-types/category/schema.json`。
 
-<sub>🤫 Psst! [Strapi is hiring](https://strapi.io/careers).</sub>
+## Bootstrap 自動設定
+
+`src/index.ts` 在 Strapi 啟動時會：
+
+1. 設定 Public / Authenticated 角色權限
+2. 停用公開註冊（移除 `auth.register` 權限，可由 `ENABLE_PUBLIC_REGISTER=true` 開啟）
+3. Seed 3 個 Demo 分類：科技 / 設計 / 生活
+4. Seed 3 篇 Demo 文章（Apple Silicon / 設計哲學 / Mac 工具）
+5. Seed Demo User：`demo@strapi.local` / `Demo1234!`
+
+## 環境變數
+
+完整變數見 `.env.example`。重點：
+
+| 變數 | 預設值 | 說明 |
+|------|--------|------|
+| `HOST` | `0.0.0.0` | 綁定位址 |
+| `PORT` | `1337` | 通訊埠 |
+| `DATABASE_CLIENT` | `sqlite` | 資料庫類型 |
+| `DATABASE_FILENAME` | `.tmp/data.db` | SQLite 檔案路徑 |
+| `ENABLE_PUBLIC_REGISTER` | `false` | 公開註冊開關 |
+| `APP_KEYS` / `API_TOKEN_SALT` / `ADMIN_JWT_SECRET` 等 | 自動生成 | JWT 密鑰（勿 commit 到 git） |
+
+## REST API 重點端點
+
+| Method | Path | 用途 | 認證 |
+|--------|------|------|------|
+| GET | `/api/articles?populate[0]=cover&populate[1]=category` | 文章列表 | 公開 |
+| GET | `/api/articles?filters[slug][$eq]=<slug>&populate[0]=cover&populate[1]=category` | 單篇 | 公開 |
+| GET | `/api/categories` | 分類列表 | 公開 |
+| POST | `/api/auth/local` | 登入（回傳 JWT） | — |
+| POST | `/api/upload` | 上傳檔案 | JWT |
+| POST | `/api/articles` | 建立文章 | JWT |
+
+> ⚠️ Strapi 5 的 `populate` 改為 bracket notation：
+> `?populate[0]=cover&populate[1]=category`（**不是** Strapi 4 的 `populate=cover,category`）
+
+## 部署
+
+正式部署見 [Strapi 官方文件](https://docs.strapi.io/dev-docs/deployment)。
+本專案為 Demo 性質，預設使用 SQLite，正式環境建議：
+
+1. 改用 PostgreSQL：`DATABASE_CLIENT=postgres` + 設定 `DATABASE_*` 連線資訊
+2. JWT secrets 用強隨機值
+3. 改用 HttpOnly cookie 認證
+
+## 相關資源
+
+- [Strapi 官方文件](https://docs.strapi.io)
+- [REST API 參考](https://docs.strapi.io/dev-docs/api/rest)
+- [Users & Permissions plugin](https://docs.strapi.io/dev-docs/plugins/users-permissions)
