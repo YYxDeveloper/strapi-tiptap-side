@@ -16,6 +16,23 @@ const AUTHENTICATED_PERMISSIONS: Array<{ action: string }> = [
   { action: 'plugin::upload.content-api.upload' },
 ];
 
+interface CategoryRecord {
+  id: number;
+  documentId: string;
+  name: string;
+  slug: string;
+  color: string | null;
+}
+
+interface ArticleSeedData {
+  title: string;
+  slug: string;
+  excerpt: string;
+  content: string;
+  category: number | undefined;
+  publishedAt: Date;
+}
+
 const seedCategories = async (strapi: Core.Strapi) => {
   const existing = await strapi.db.query('api::category.category').findMany();
   if (existing.length > 0) {
@@ -110,19 +127,53 @@ const setAuthenticatedPermissions = async (strapi: Core.Strapi) => {
   }
 };
 
+const disablePublicRegistration = async (strapi: Core.Strapi) => {
+  // Strapi 5 doesn't expose a `register.enabled` config flag;
+  // public registration is controlled by the auth.register permission
+  // existing on the Public role. Remove it to block POST /api/auth/local/register.
+  // Toggle via ENABLE_PUBLIC_REGISTER=true to keep it enabled.
+  if (process.env.ENABLE_PUBLIC_REGISTER === 'true') {
+    return;
+  }
+
+  const publicRole = await strapi.db
+    .query('plugin::users-permissions.role')
+    .findOne({ where: { type: 'public' } });
+
+  if (!publicRole) {
+    return;
+  }
+
+  const registerPerm = await strapi.db
+    .query('plugin::users-permissions.permission')
+    .findOne({
+      where: { action: 'plugin::users-permissions.auth.register', role: publicRole.id },
+    });
+
+  if (registerPerm) {
+    await strapi.db
+      .query('plugin::users-permissions.permission')
+      .delete({ where: { id: registerPerm.id } });
+    strapi.log.info('Disabled public registration (removed auth.register from Public role)');
+  }
+};
+
 const seedArticles = async (strapi: Core.Strapi) => {
   const existing = await strapi.db.query('api::article.article').findMany();
   if (existing.length > 0) {
     return;
   }
 
-  const categories = await strapi.db
+  const categories: CategoryRecord[] = await strapi.db
     .query('api::category.category')
     .findMany({ where: { slug: { $in: ['tech', 'design', 'life'] } } });
 
-  const bySlug = Object.fromEntries(categories.map((c: any) => [c.slug, c.id]));
+  // strapi.db.query() uses numeric `id` for internal FK relations,
+  // while the public Strapi API uses `documentId`. We use `id` here
+  // because we are working at the DB layer.
+  const bySlug = Object.fromEntries(categories.map((c) => [c.slug, c.id]));
 
-  const articles = [
+  const articles: ArticleSeedData[] = [
     {
       title: '為什麼 Apple Silicon 改變了一切',
       slug: 'why-apple-silicon-changed-everything',
@@ -167,6 +218,7 @@ export default {
     try {
       await setPublicPermissions(strapi);
       await setAuthenticatedPermissions(strapi);
+      await disablePublicRegistration(strapi);
       await seedCategories(strapi);
       await seedArticles(strapi);
       await seedDemoUser(strapi);
