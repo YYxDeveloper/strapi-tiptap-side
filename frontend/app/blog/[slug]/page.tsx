@@ -22,11 +22,13 @@ export default async function ArticlePage({ params }: PageProps) {
   return (
     <article className="max-w-3xl mx-auto px-6 py-12">
       {article.cover && (
-        <div className="aspect-[16/9] rounded-3xl overflow-hidden mb-8 -mt-4">
+        <div className="rounded-3xl overflow-hidden mb-8 -mt-4 bg-gradient-to-br from-gray-100 to-gray-200">
           <img
             src={article.cover.url}
             alt={article.title}
-            className="w-full h-full object-cover"
+            width={article.cover.width}
+            height={article.cover.height}
+            className="w-full h-auto"
           />
         </div>
       )}

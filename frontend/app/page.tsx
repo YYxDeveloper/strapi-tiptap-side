@@ -22,11 +22,13 @@ export default async function HomePage() {
             {featured.cover && (
               <a
                 href={`/blog/${featured.slug}`}
-                className="block max-w-4xl mx-auto rounded-3xl overflow-hidden shadow-xl"
+                className="block max-w-4xl mx-auto rounded-3xl overflow-hidden shadow-xl bg-gradient-to-br from-gray-100 to-gray-200"
               >
                 <img
                   src={featured.cover.url}
                   alt={featured.title}
+                  width={featured.cover.width}
+                  height={featured.cover.height}
                   className="w-full h-auto"
                 />
               </a>

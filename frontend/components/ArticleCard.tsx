@@ -19,15 +19,18 @@ export default function ArticleCard({ article }: ArticleCardProps) {
       href={`/blog/${article.slug}`}
       className="group block rounded-2xl overflow-hidden bg-white border border-gray-200 hover:shadow-lg transition-shadow"
     >
-      <div className="aspect-[16/9] bg-gradient-to-br from-gray-100 to-gray-200 overflow-hidden">
+      <div className="bg-gradient-to-br from-gray-100 to-gray-200 overflow-hidden">
         {coverUrl ? (
           <img
             src={coverUrl}
             alt={article.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            width={article.cover?.width}
+            height={article.cover?.height}
+            loading="lazy"
+            className="w-full h-auto group-hover:scale-105 transition-transform duration-300"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">
+          <div className="aspect-[16/9] w-full flex items-center justify-center text-gray-400 text-sm">
             No cover
           </div>
         )}
