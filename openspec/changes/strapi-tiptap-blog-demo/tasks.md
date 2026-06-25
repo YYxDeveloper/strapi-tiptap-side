@@ -2,14 +2,14 @@
 
 ## Sub-issue 1：backend — Strapi 後端建置 + Demo 資料
 
-- [ ] `npx create-strapi-app@latest backend --quickstart`
-- [ ] 建立 Category content type（name, slug, color）
-- [ ] 建立 Article content type（title, slug, content, excerpt, cover, category）
-- [ ] 設定 Public 角色權限（articles: find/findOne, categories: find/findOne）
-- [ ] 設定 Authenticated 角色權限（articles: create, upload: upload）
-- [ ] 新增 3 個分類（科技/設計/生活 + color）
-- [ ] 透過 Strapi Admin 建立 3 篇 Demo 文章（含封面圖、分類）
-- [ ] 驗證 `GET /api/articles?populate=cover,category` 回傳正確
+- [x] `npx create-strapi-app@latest backend --quickstart`
+- [x] 建立 Category content type（name, slug, color）
+- [x] 建立 Article content type（title, slug, content, excerpt, cover, category）
+- [x] 設定 Public 角色權限（articles: find/findOne, categories: find/findOne）
+- [x] 設定 Authenticated 角色權限（articles: create, upload: upload）
+- [x] 新增 3 個分類（科技/設計/生活 + color）
+- [x] 透過 Strapi Admin 建立 3 篇 Demo 文章（含封面圖、分類）
+- [x] 驗證 `GET /api/articles?populate=cover,category` 回傳正確
 
 ## Sub-issue 2：frontend — Next.js 骨架 + 認證 + 分類頁
 
